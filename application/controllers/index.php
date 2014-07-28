@@ -6,8 +6,10 @@ class index extends CI_Controller {
 		parent::__construct();
 		$this->load->library('pdf');
 		$this->pdf->fontpath = 'fonts/';
+
+		$this->load->library('zend');
+        $this->zend->load('Zend/Barcode');
 		
- 
 	}
 	
 	public function index()
@@ -27,7 +29,8 @@ class index extends CI_Controller {
 			
 		$this->load->view('header');
 		$this->load->view('data',$data);
-		$this->load->view('footer');
+		$this->load->view('footer'); 
+
 	}
 	
 	public function student_id($id)
@@ -41,9 +44,17 @@ class index extends CI_Controller {
 		}
 		echo '#'.$sid.' '.$name.' '.$surename;
 	}
-	
+
+	private function barcode($id) 
+	{
+		$barcode = Zend_Barcode::draw('code39', 'image', array('text' => $id), array());
+		imagejpeg($barcode,'assets/barcode/barcode.jpg', 100);
+		//imagedestroy($barcode); 
+	}
+	 
 	public function student_id_pdf($id)
 	{
+		$this->barcode($id);
 		$students = $this->index_model->student_id($id);
 		foreach($students as $student)
 		{
@@ -61,7 +72,7 @@ class index extends CI_Controller {
 		$this->pdf->AddPage();
 		$this->pdf->Image(base_url().'assets/images/dla.jpg',0.65,0.2,1.25,1.25);
 		$this->pdf->Image(base_url().'assets/stdpic/'.$pic,0.5,1.5,1.75,2.5);
-		$this->pdf->Image(base_url().'assets/stdpic/'.$pic,0.5,1.5,1.75,2.5);
+		$this->pdf->Image(base_url('assets/barcode/barcode.jpg'),0.4,4.5,2,0.75);
 		$this->pdf->AddFont('THSarabun','','THSarabun.php');
 		$this->pdf->SetFont('THSarabun','',18);
 		$this->pdf->Text(3,1,iconv('UTF-8','TIS-620','บัตรประจำตัวนักเรียน'));
@@ -97,8 +108,8 @@ class index extends CI_Controller {
 		/*-------*/
 		
 		$this->pdf->AddPage();
-		$this->pdf->Image(base_url().'assets/images/logo.png',0.75,0.2,1.55,1.75);
-		$this->pdf->Image(base_url().'assets/images/qrcode_tk.png',0.5,2.5,2,2);
+		$this->pdf->Image(base_url().'assets/images/logo.png',0.5,0.2,1.75,2);
+		$this->pdf->Image(base_url().'assets/images/qrcode_tk.png',0.5,3,2,2);
 		$this->pdf->AddFont('THSarabun','','THSarabun.php');
 		$this->pdf->SetFont('THSarabun','',18);
 		$this->pdf->Text(3,1,iconv('UTF-8','TIS-620','โรงเรียนแก้วผดุงพิทยาลัย'));
@@ -114,19 +125,11 @@ class index extends CI_Controller {
 		$this->pdf->Text(3,5,iconv('UTF-8','TIS-620','บัตรหมดอายุ 16 พฤษภาคม 2559'));
 		
 		$this->pdf->Output();
-		
 	}
 	
 	public function export_all()
 	{
 		
 	}
-	
-	function barcode() {
-		$this->load->library('zend');
-		$this->zend->load('Zend/Barcode');
-		$test = Zend_Barcode::draw('ean8', 'image', array('text' => '1234565'), array());
-		var_dump($test);
-		imagejpeg($test, 'barcode.jpg', 100);
-	}
+
 }

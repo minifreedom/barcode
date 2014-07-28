@@ -1,5 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-define('FPDF_FONTPATH','C:\xampp\htdocs\freelance\pdf\application\libraries\fpdf\font/');
+define('FPDF_FONTPATH','C:\xampp\htdocs\freelance\pdf\application\libraries\fpdf\font');
 require('fpdf/fpdf.php');
 class Pdf extends FPDF
 {

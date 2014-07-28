@@ -1,5 +1,4 @@
 <div class="container">
-	<a class="btn btn-success pull-right" href="<?php echo base_url('download'); ?>">ดาวน์โหลด pdf ทั้งหมด</a>
 	<table width="100%" class="table-bordered">
 		<thead>
 		<tr>
