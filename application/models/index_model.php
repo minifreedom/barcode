@@ -38,11 +38,10 @@ class index_model extends CI_Model {
 		return $query->result();
 	}
 	
-	function student_id_pdf($id)
+	function student_all()
 	{
 		mysql_query("SET NAMES 'tis620'");
-		$query = $this->db->from('tb_students')->where('id_student',$id)->get();
+		$query = $this->db->from('tb_students')->get();
 		return $query->result();
 	}
-
 }

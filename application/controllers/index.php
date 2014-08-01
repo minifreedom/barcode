@@ -10,6 +10,8 @@ class index extends CI_Controller {
 		$this->load->library('zend');
         $this->zend->load('Zend/Barcode');
 		
+		$this->load->helper('download');
+		$this->load->library('zip');
 	}
 	
 	public function index()
@@ -48,8 +50,7 @@ class index extends CI_Controller {
 	private function barcode($id) 
 	{
 		$barcode = Zend_Barcode::draw('code39', 'image', array('text' => $id), array());
-		imagejpeg($barcode,'assets/barcode/barcode.jpg', 100);
-		//imagedestroy($barcode); 
+		$img = imagejpeg($barcode,'assets/barcode/barcode'.$id.'.jpg', 100);
 	}
 	 
 	public function student_id_pdf($id)
@@ -62,74 +63,142 @@ class index extends CI_Controller {
 		  $pid  = $student->pass_student;
 		  $name = $student->name_student;
 		  $surename = $student->surename_student;
+ 		  $sex = $student->sex;
 		  $pic = $student->photo;
-		  $sex = $student->sex_student;
 		  $m  = $student->classst;
 		}
 		$passId = substr($pid,0,1).'-'.substr($pid,1,4).'-'.substr($pid,5,5).'-'.substr($pid,10,2).'-'.substr($pid,12,1);
 		
-		$this->pdf->FPDF('L','cm',array(8.5,5.5));
+		$this->pdf->FPDF('P','cm','A4');
 		$this->pdf->AddPage();
-		$this->pdf->Image(base_url().'assets/images/dla.jpg',0.65,0.2,1.25,1.25);
-		$this->pdf->Image(base_url().'assets/stdpic/'.$pic,0.5,1.5,1.75,2.5);
-		$this->pdf->Image(base_url('assets/barcode/barcode.jpg'),0.4,4.5,2,0.75);
+		$this->pdf->Image(base_url().'assets/images/dla.jpg',0.85,0.5,2,2);
+		$this->pdf->Image(base_url().'assets/stdpic/'.$pic,0.5,2.7,2.75,3.5);
+		$this->pdf->Image(base_url('assets/barcode/barcode'.$id.'.jpg'),0.7,6.5,2.5,0.75);
+		$this->pdf->AddFont('angsau','','angsau.php');
+		$this->pdf->SetFont('angsau','',26);
+		$this->pdf->Text(3.7,1.5,iconv('UTF-8','TIS-620','บัตรประจำตัวนักเรียน'));
+		$this->pdf->SetFont('angsau','',18);
+		$this->pdf->Text(3.7,2.3,iconv('UTF-8','TIS-620','โรงเรียนต้นแก้วผดุงพิทยาลัย'));
 		$this->pdf->AddFont('THSarabun','','THSarabun.php');
-		$this->pdf->SetFont('THSarabun','',18);
-		$this->pdf->Text(3,1,iconv('UTF-8','TIS-620','บัตรประจำตัวนักเรียน'));
-		$this->pdf->AddFont('THSarabun','','THSarabun.php');
-		$this->pdf->SetFont('THSarabun','',15);
-		$this->pdf->Text(3,1.5,iconv('UTF-8','TIS-620','โรงเรียนแก้วผดุงพิทยาลัย'));
-		if($sex=='หญิง')
+		if($sex=='girl')
 		{
-			$this->pdf->Text(3,2,iconv('UTF-8','TIS-620','เด็กหญิง'));
-		}else{
-			$this->pdf->Text(3,2.2,iconv('UTF-8','TIS-620','เด็กชาย '));
+			$this->pdf->Text(3.7,3.2,iconv('UTF-8','TIS-620','เด็กหญิง'));
+			$this->pdf->Text(5.4,3.2,$name.' '.$surename);
 		}
-		$this->pdf->Text(4.1,2.2,$name.' '.$surename);
-		$this->pdf->SetFont('THSarabun','',10);
-		$this->pdf->Text(3,2.8,iconv('UTF-8','TIS-620','เลขประจำตัวนักเรียน '.$sid));
-		$this->pdf->Text(3,3.3,iconv('UTF-8','TIS-620','บัตรประชาชน '.$passId));
+		if($sex=='men')
+		{
+			$this->pdf->Text(3.7,3,iconv('UTF-8','TIS-620','เด็กชาย '));
+			$this->pdf->Text(5,3,$name.' '.$surename);
+		}
+		
+		$this->pdf->Text(3.7,4,iconv('UTF-8','TIS-620','เลขประจำตัวนักเรียน '.$sid));
+		$this->pdf->Text(3.7,4.7,iconv('UTF-8','TIS-620','บัตรประชาชน '.$passId));
 		
 		if($m=='p1' or $m=='p2' or $m=='p3')
 		{
-			$this->pdf->Text(3,3.8,iconv('UTF-8','TIS-620','ระดับชั้น  ประถมศึกษาตอนต้น'));
+			$this->pdf->Text(3.7,5.5,iconv('UTF-8','TIS-620','ระดับชั้น  ประถมศึกษาตอนต้น'));
 		}
 		if($m=='p4' or $m=='p5' or $m=='p6')
 		{
-			$this->pdf->Text(3,3.8,iconv('UTF-8','TIS-620','ระดับชั้น  ประถมศึกษาตอนปลาย'));
+			$this->pdf->Text(3.7,5.5,iconv('UTF-8','TIS-620','ระดับชั้น  ประถมศึกษาตอนปลาย'));
 		}
 		if($m=='m1' or $m=='m2' or $m=='m3')
 		{
-			$this->pdf->Text(3,3.8,iconv('UTF-8','TIS-620','ระดับชั้น  มัธยมศึกษาตอนต้น'));
+			$this->pdf->Text(3.7,5.5,iconv('UTF-8','TIS-620','ระดับชั้น  มัธยมศึกษาตอนต้น'));
 		}
-		$this->pdf->Text(3,4.6,iconv('UTF-8','TIS-620','.....................................................'));
-		$this->pdf->Text(3.7,5,iconv('UTF-8','TIS-620','ผู้อำนวยการ'));
+		$this->pdf->Text(3.7,6.5,iconv('UTF-8','TIS-620','.....................................................'));
+		$this->pdf->Text(5.5,7.2,iconv('UTF-8','TIS-620','ผู้อำนวยการ'));
 		
-		/*-------*/
-		
-		$this->pdf->AddPage();
-		$this->pdf->Image(base_url().'assets/images/logo.png',0.5,0.2,1.75,2);
-		$this->pdf->Image(base_url().'assets/images/qrcode_tk.png',0.5,3,2,2);
-		$this->pdf->AddFont('THSarabun','','THSarabun.php');
-		$this->pdf->SetFont('THSarabun','',18);
-		$this->pdf->Text(3,1,iconv('UTF-8','TIS-620','โรงเรียนแก้วผดุงพิทยาลัย'));
-		$this->pdf->AddFont('THSarabun','','THSarabun.php');
-		$this->pdf->SetFont('THSarabun','',14);
-		$this->pdf->Text(3,1.5,iconv('UTF-8','TIS-620','Tonkaewphadungpittayalai School'));
-		$this->pdf->Text(3,2,iconv('UTF-8','TIS-620','www.tonkaew.ac.th'));
-		$this->pdf->SetFont('THSarabun','',10);
-		$this->pdf->Text(3,2.5,iconv('UTF-8','TIS-620','69 หมู่ 1 ตำบล ขุนคง อำเภอ หางดง '));
-		$this->pdf->Text(3,3,iconv('UTF-8','TIS-620','จังหวัด เชียงใหม่ รหัสไปรษณีย์ 50230 '));
-		$this->pdf->Text(3,3.5,iconv('UTF-8','TIS-620','โทร 053-434175 '));
-		$this->pdf->Text(3,4.5,iconv('UTF-8','TIS-620','ออกบัตร 16 พฤษภาคม 2557'));
-		$this->pdf->Text(3,5,iconv('UTF-8','TIS-620','บัตรหมดอายุ 16 พฤษภาคม 2559'));
+		$this->pdf->Image(base_url().'assets/images/logo.png',10.7,0.5,2,2.5);
+		$this->pdf->Image(base_url().'assets/images/qrcode_tk.png',10.5,4,2.5,2.5);
+		$this->pdf->SetFont('angsau','',26);
+		$this->pdf->Text(13.2,1.5,iconv('UTF-8','TIS-620','โรงเรียนต้นแก้วผดุงพิทยาลัย'));
+		$this->pdf->SetFont('angsau','',18);
+		$this->pdf->Text(13.2,2.2,iconv('UTF-8','TIS-620','Tonkaewphadungpittayalai School'));
+		$this->pdf->Text(13.2,2.7,iconv('UTF-8','TIS-620','www.tonkaew.ac.th'));
+		$this->pdf->Text(13.2,3.5,iconv('UTF-8','TIS-620','69 หมู่ 1 ตำบล ขุนคง อำเภอ หางดง '));
+		$this->pdf->Text(13.2,4.2,iconv('UTF-8','TIS-620','จังหวัด เชียงใหม่ รหัสไปรษณีย์ 50230 '));
+		$this->pdf->Text(13.2,5,iconv('UTF-8','TIS-620','โทร 053-434175 '));
+		$this->pdf->Text(13.2,6.2,iconv('UTF-8','TIS-620','ออกบัตร 16 พฤษภาคม 2557'));
+		$this->pdf->Text(13.2,7,iconv('UTF-8','TIS-620','บัตรหมดอายุ 16 พฤษภาคม 2559'));
 		
 		$this->pdf->Output();
 	}
 	
-	public function export_all()
+	public function download()
 	{
+		$students = $this->index_model->student_all();
+		foreach($students as $student)
+		{
+			$id = $student->id_student;
+			$pid  = $student->pass_student;
+			$name = $student->name_student;
+			$surename = $student->surename_student;
+			$sex = $student->sex;
+			$pic = $student->photo;
+			$m  = $student->classst;
 		
+			$this->barcode($id);
+			$passId = substr($pid,0,1).'-'.substr($pid,1,4).'-'.substr($pid,5,5).'-'.substr($pid,10,2).'-'.substr($pid,12,1);
+			
+			$this->pdf->FPDF('P','cm','A4');
+			$this->pdf->AddPage();
+			$this->pdf->Image(base_url().'assets/images/dla.jpg',0.85,0.5,2,2);
+			$this->pdf->Image(base_url().'assets/stdpic/'.$pic,0.5,2.7,2.75,3.5);
+			$this->pdf->Image(base_url('assets/barcode/barcode'.$id.'.jpg'),0.7,6.5,2.5,0.75);
+			$this->pdf->AddFont('angsau','','angsau.php');
+			$this->pdf->SetFont('angsau','',26);
+			$this->pdf->Text(3.7,1.5,iconv('UTF-8','TIS-620','บัตรประจำตัวนักเรียน'));
+			$this->pdf->SetFont('angsau','',18);
+			$this->pdf->Text(3.7,2.3,iconv('UTF-8','TIS-620','โรงเรียนต้นแก้วผดุงพิทยาลัย'));
+			$this->pdf->AddFont('THSarabun','','THSarabun.php');
+			if($sex=='girl')
+			{
+				$this->pdf->Text(3.7,3.2,iconv('UTF-8','TIS-620','เด็กหญิง'));
+				$this->pdf->Text(5.4,3.2,$name.' '.$surename);
+			}
+			if($sex=='men')
+			{
+				$this->pdf->Text(3.7,3,iconv('UTF-8','TIS-620','เด็กชาย '));
+				$this->pdf->Text(5,3,$name.' '.$surename);
+			}
+			
+			$this->pdf->Text(3.7,4,iconv('UTF-8','TIS-620','เลขประจำตัวนักเรียน '.$id));
+			$this->pdf->Text(3.7,4.7,iconv('UTF-8','TIS-620','บัตรประชาชน '.$passId));
+			
+			if($m=='p1' or $m=='p2' or $m=='p3')
+			{
+				$this->pdf->Text(3.7,5.5,iconv('UTF-8','TIS-620','ระดับชั้น  ประถมศึกษาตอนต้น'));
+			}
+			if($m=='p4' or $m=='p5' or $m=='p6')
+			{
+				$this->pdf->Text(3.7,5.5,iconv('UTF-8','TIS-620','ระดับชั้น  ประถมศึกษาตอนปลาย'));
+			}
+			if($m=='m1' or $m=='m2' or $m=='m3')
+			{
+				$this->pdf->Text(3.7,5.5,iconv('UTF-8','TIS-620','ระดับชั้น  มัธยมศึกษาตอนต้น'));
+			}
+			$this->pdf->Text(3.7,6.5,iconv('UTF-8','TIS-620','.....................................................'));
+			$this->pdf->Text(5.5,7.2,iconv('UTF-8','TIS-620','ผู้อำนวยการ'));
+			
+			$this->pdf->Image(base_url().'assets/images/logo.png',10.7,0.5,2,2.5);
+			$this->pdf->Image(base_url().'assets/images/qrcode_tk.png',10.5,4,2.5,2.5);
+			$this->pdf->SetFont('angsau','',26);
+			$this->pdf->Text(13.2,1.5,iconv('UTF-8','TIS-620','โรงเรียนต้นแก้วผดุงพิทยาลัย'));
+			$this->pdf->SetFont('angsau','',18);
+			$this->pdf->Text(13.2,2.2,iconv('UTF-8','TIS-620','Tonkaewphadungpittayalai School'));
+			$this->pdf->Text(13.2,2.7,iconv('UTF-8','TIS-620','www.tonkaew.ac.th'));
+			$this->pdf->Text(13.2,3.5,iconv('UTF-8','TIS-620','69 หมู่ 1 ตำบล ขุนคง อำเภอ หางดง '));
+			$this->pdf->Text(13.2,4.2,iconv('UTF-8','TIS-620','จังหวัด เชียงใหม่ รหัสไปรษณีย์ 50230 '));
+			$this->pdf->Text(13.2,5,iconv('UTF-8','TIS-620','โทร 053-434175 '));
+			$this->pdf->Text(13.2,6.2,iconv('UTF-8','TIS-620','ออกบัตร 16 พฤษภาคม 2557'));
+			$this->pdf->Text(13.2,7,iconv('UTF-8','TIS-620','บัตรหมดอายุ 16 พฤษภาคม 2559'));
+			
+			$this->pdf->Output('assets/download/pdf'.$id.'.pdf','F');
+		}
+		$path = base_url('assets/download/');
+		$this->zip->read_dir($path); 
+		$this->zip->download('my_backup.zip');
 	}
-
+	
 }

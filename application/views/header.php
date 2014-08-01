@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>PDFif</title>  
+<title>PDF</title>  
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link href="<?php echo base_url('assets/css/bootstrap.min.css'); ?>" rel="stylesheet"  type="text/css" media="screen"/>

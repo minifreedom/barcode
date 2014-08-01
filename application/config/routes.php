@@ -46,8 +46,7 @@ $route['page/(:any)'] = "index/index/$1";
 $route['student/'] = "index/student_id/$1";
 $route['student/(:num)'] = "index/student_id/$1";
 $route['student/(:num)/pdf'] = "index/student_id_pdf/$1";
-$route['download'] = "index/export_all";
-$route['barcode'] = "index/barcode";
+$route['download'] = "index/download";
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
