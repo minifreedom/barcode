@@ -80,6 +80,7 @@ class index extends CI_Controller {
 		$this->pdf->SetFont('angsau','',18);
 		$this->pdf->Text(3.7,2.3,iconv('UTF-8','TIS-620','โรงเรียนต้นแก้วผดุงพิทยาลัย'));
 		$this->pdf->AddFont('THSarabun','','THSarabun.php');
+		$this->pdf->SetFont('THSarabun','',18);
 		if($sex=='girl')
 		{
 			$this->pdf->Text(3.7,3.2,iconv('UTF-8','TIS-620','เด็กหญิง'));
@@ -88,7 +89,7 @@ class index extends CI_Controller {
 		if($sex=='men')
 		{
 			$this->pdf->Text(3.7,3,iconv('UTF-8','TIS-620','เด็กชาย '));
-			$this->pdf->Text(5,3,$name.' '.$surename);
+			$this->pdf->Text(5.1,3,$name.' '.$surename);
 		}
 		
 		$this->pdf->Text(3.7,4,iconv('UTF-8','TIS-620','เลขประจำตัวนักเรียน '.$sid));
@@ -198,7 +199,7 @@ class index extends CI_Controller {
 		}
 		$path = base_url('assets/download/');
 		$this->zip->read_dir($path); 
-		$this->zip->download('my_backup.zip');
+		$this->zip->download('pdf.zip');
 	}
 	
 }

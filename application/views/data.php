@@ -1,4 +1,5 @@
 <div class="container">
+	<a href="<?php echo base_url('download'); ?>" class="btn btn-success pull-right">Download PDF</a>
 	<table width="100%" class="table-bordered">
 		<thead>
 		<tr>
