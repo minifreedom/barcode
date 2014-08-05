@@ -88,24 +88,34 @@ class index extends CI_Controller {
 		}
 		if($sex=='men')
 		{
-			$this->pdf->Text(3.7,3,iconv('UTF-8','TIS-620','เด็กชาย '));
-			$this->pdf->Text(5.1,3,$name.' '.$surename);
+			$this->pdf->Text(3.7,3.2,iconv('UTF-8','TIS-620','เด็กชาย '));
+			$this->pdf->Text(5.1,3.2,$name.' '.$surename);
 		}
 		
+		$this->pdf->SetFont('angsau','',18);
 		$this->pdf->Text(3.7,4,iconv('UTF-8','TIS-620','เลขประจำตัวนักเรียน '.$sid));
 		$this->pdf->Text(3.7,4.7,iconv('UTF-8','TIS-620','บัตรประชาชน '.$passId));
 		
 		if($m=='p1' or $m=='p2' or $m=='p3')
 		{
-			$this->pdf->Text(3.7,5.5,iconv('UTF-8','TIS-620','ระดับชั้น  ประถมศึกษาตอนต้น'));
+			$this->pdf->SetFont('THSarabun','',18);
+			$this->pdf->Text(3.7,5.5,iconv('UTF-8','TIS-620','ระดับชั้น  '));
+			$this->pdf->SetFont('angsau','',18);
+			$this->pdf->Text(5.3,5.5,iconv('UTF-8','TIS-620','ประถมศึกษาตอนต้น'));
 		}
 		if($m=='p4' or $m=='p5' or $m=='p6')
 		{
-			$this->pdf->Text(3.7,5.5,iconv('UTF-8','TIS-620','ระดับชั้น  ประถมศึกษาตอนปลาย'));
+			$this->pdf->SetFont('THSarabun','',18);
+			$this->pdf->Text(3.7,5.5,iconv('UTF-8','TIS-620','ระดับชั้น  '));
+			$this->pdf->SetFont('angsau','',18);
+			$this->pdf->Text(5.3,5.5,iconv('UTF-8','TIS-620','ประถมศึกษาตอนปลาย'));
 		}
 		if($m=='m1' or $m=='m2' or $m=='m3')
 		{
-			$this->pdf->Text(3.7,5.5,iconv('UTF-8','TIS-620','ระดับชั้น  มัธยมศึกษาตอนต้น'));
+			$this->pdf->SetFont('THSarabun','',18);
+			$this->pdf->Text(3.7,5.5,iconv('UTF-8','TIS-620','ระดับชั้น  '));
+			$this->pdf->SetFont('angsau','',18);
+			$this->pdf->Text(5.3,5.5,iconv('UTF-8','TIS-620','มัธยมศึกษาตอนต้น'));
 		}
 		$this->pdf->Text(3.7,6.5,iconv('UTF-8','TIS-620','.....................................................'));
 		$this->pdf->Text(5.5,7.2,iconv('UTF-8','TIS-620','ผู้อำนวยการ'));
