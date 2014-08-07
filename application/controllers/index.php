@@ -72,14 +72,13 @@ class index extends CI_Controller {
 		$this->pdf->FPDF('P','cm','A4');
 		$this->pdf->AddPage();
 		$this->pdf->Line(0.25,0.25,0.25,8);
-		$this->pdf->Line(0.25,0.25,10,0.25);
-		$this->pdf->Line(0.25,8,10,8);
-		$this->pdf->Line(10,0.25,10,8);
-		
-		$this->pdf->Line(10.5,0.25,10.5,8);
-		$this->pdf->Line(10.5,0.25,20.25,0.25);
-		$this->pdf->Line(10.5,8,20.25,8);
 		$this->pdf->Line(20.25,0.25,20.25,8);
+		
+		$this->pdf->Line(10.25,0.25,10.25,8);
+		
+		$this->pdf->Line(0.25,0.25,20.25,0.25);
+		$this->pdf->Line(0.25,8,20.25,8);
+		
 		$this->pdf->Image(base_url().'assets/images/dla.jpg',0.85,0.5,2,2);
 		$this->pdf->Image(base_url().'assets/stdpic/'.$pic,0.5,2.7,2.75,3.5);
 		$this->pdf->Image(base_url('assets/barcode/barcode'.$id.'.jpg'),0.7,6.5,2.5,0.75);
