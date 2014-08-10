@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .DS_Store
 
 application/cache/*
@@ -10,3 +11,11 @@ application/logs/*
 
 assets/download/*
 assets/barcode/*
+=======
+*/config/development
+*/logs/log-*.php
+*/logs/!index.html
+*/cache/*
+*/cache/!index.html
+*/cache/!.htaccess
+>>>>>>> bfe012acc5f4bf8df00a1793e1c2140d6d2f132f
